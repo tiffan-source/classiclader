@@ -42,11 +42,13 @@ class ApplicationInterface:
         self.debit1 = Debit1(self.modubusConnexion)
         self.plus1 = Plus(75, 177, self.debit1Increase)
         self.minus1 = Minus(145, 177, self.debit1Decrease)
+        self.level1 = Level(self.getPercentFillTremie1)
         
         self.tremie2 = Tremie2()
         self.debit2 = Debit2(self.modubusConnexion)
         self.plus2 = Plus(445, 177, self.debit2Increase)
         self.minus2 = Minus(515, 177, self.debit2Decrease)
+        self.level2 = Level(self.getPercentFillTremie2)
         
         self.tremie3 = Tremie3()
         self.debit3 = Debit3(self.modubusConnexion)
@@ -105,6 +107,15 @@ class ApplicationInterface:
         self.plus3.handle_events(event)
         self.minus3.handle_events(event)
         
+    def getPercentFillTremie1(self):
+        mc = self.modubusConnexion
+        print((5100 - mc.getDebitTremie1() * mc.getNiveauTremie3() / (mc.getDebitTremie1() + mc.getDebitTremie2() + mc.getDebitTremie3()))/5100)
+        return (5100 - mc.getDebitTremie1() * mc.getNiveauTremie3() / (mc.getDebitTremie1() + mc.getDebitTremie2() + mc.getDebitTremie3()))/5100
+    
+    def getPercentFillTremie2(self):
+        mc = self.modubusConnexion
+        return (5100 - mc.getDebitTremie2() * mc.getNiveauTremie3() / (mc.getDebitTremie1() + mc.getDebitTremie2() + mc.getDebitTremie3()))/5100    
+    
     def getPercentFillTremie3(self):
         if self.modubusConnexion.getNiveauTremie3() >= 10000:
             return 1
@@ -119,20 +130,22 @@ class ApplicationInterface:
         self.screen.blit(self.debit1.render(), (100, 180))
         self.screen.blit(self.plus1.render(), (75, 177))
         self.screen.blit(self.minus1.render(), (145, 177))
+        surfaceLevel1, y1 = self.level1.getSurfaceAndXY(240)
+        self.screen.blit(surfaceLevel1, (217, y1))
         
         self.screen.blit(self.tremie2.render(), (500, 120))
         self.screen.blit(self.debit2.render(), (470, 180))
         self.screen.blit(self.plus2.render(), (445, 177))
         self.screen.blit(self.minus2.render(), (515, 177))
+        surfaceLevel2, y2 = self.level2.getSurfaceAndXY(240)
+        self.screen.blit(surfaceLevel2, (567, y2))
         
         self.screen.blit(self.tremie3.render(), (315, 320))
         self.screen.blit(self.debit3.render(), (270, 380))
         self.screen.blit(self.plus3.render(), (245, 377))
         self.screen.blit(self.minus3.render(), (315, 377))
-        
-        
         surfaceLevel3, y3 = self.level3.getSurfaceAndXY(440)
-        self.screen.blit(surfaceLevel3, (360, y3))
+        self.screen.blit(surfaceLevel3, (382, y3))
         
         
         self.screen.blit(self.rampe1.render(), (120, 260))
